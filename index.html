@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قبض الحوالات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background-color: #e0e0e0;
+            padding: 10px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(to bottom, #a8e6a8, #90d890);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #333;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .header .date-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 5px 10px;
+            border: 1px solid #999;
+            border-radius: 3px;
+        }
+
+        .header .date-section label {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .header .date-section input {
+            padding: 4px 8px;
+            border: 1px solid #999;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .header .date-section select {
+            padding: 4px 8px;
+            border: 1px solid #999;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #333;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            cursor: pointer;
+            border: 1px solid #999;
+            border-bottom: none;
+            background: #f0c0a0;
+            font-size: 13px;
+            font-weight: bold;
+            margin-left: 2px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #90d890;
+            border-color: #333;
+        }
+
+        .tab:hover {
+            background: #b0e8b0;
+        }
+
+        /* Form Table */
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+
+        .form-table td {
+            padding: 4px 8px;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .form-table label {
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .form-table input,
+        .form-table select {
+            padding: 5px 8px;
+            border: 1px solid #999;
+            border-radius: 2px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .form-table input:focus,
+        .form-table select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-table input[readonly] {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .form-table input.highlight-green {
+            background-color: #90EE90;
+            font-weight: bold;
+        }
+
+        .form-table input.amount-input {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-icon {
+            padding: 4px 10px;
+            background: #ddd;
+            border: 1px solid #999;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 3px;
+        }
+
+        .btn-icon:hover {
+            background: #ccc;
+        }
+
+        .section-row {
+            background: #fafafa;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Company name editable */
+        .company-name-input {
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid #4CAF50 !important;
+            background: #fff !important;
+        }
+
+        /* Bottom section */
+        .bottom-section {
+            background: #f5f5f5;
+            border-top: 2px solid #333;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .calc-btn {
+            padding: 8px 20px;
+            background: #ddd;
+            border: 2px solid #333;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .calc-btn:hover {
+            background: #ccc;
+        }
+
+        .check-icon {
+            color: green;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .currency-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .currency-row label {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .currency-row input,
+        .currency-row select {
+            padding: 5px 8px;
+            border: 1px solid #999;
+            border-radius: 2px;
+            font-size: 13px;
+        }
+
+        .currency-row input[readonly] {
+            background: #f5f5f5;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            padding: 12px 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background: #45a049;
+        }
+
+        .btn-print {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #1976D2;
+        }
+
+        .btn-clear {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #d32f2f;
+        }
+
+        .btn-save {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #F57C00;
+        }
+
+        /* Invoice Preview */
+        .invoice-preview {
+            display: none;
+            margin-top: 15px;
+            border: 3px solid #333;
+            background: white;
+        }
+
+        .invoice-preview.show {
+            display: block;
+        }
+
+        .inv-header {
+            background: linear-gradient(to bottom, #a8e6a8, #90d890);
+            padding: 12px 20px;
+            text-align: center;
+            border-bottom: 2px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inv-header h2 {
+            font-size: 22px;
+        }
+
+        .inv-body {
+            padding: 15px 20px;
+        }
+
+        .inv-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #ccc;
+            font-size: 14px;
+        }
+
+        .inv-row .inv-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .inv-row .inv-value {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .inv-footer {
+            background: #f0f0f0;
+            padding: 12px 20px;
+            border-top: 2px solid #333;
+            text-align: center;
+        }
+
+        .inv-footer .access-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .amount-in-words {
+            background: #90EE90;
+            padding: 6px 15px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                border: 2px solid #333;
+            }
+
+            .action-buttons,
+            .tabs,
+            .btn {
+                display: none !important;
+            }
+
+            .invoice-preview {
+                display: block !important;
+                border: none;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .bottom-section {
+                flex-direction: column;
+            }
+
+            .form-table td {
+                display: block;
+                width: 100%;
+            }
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 10px 15px;
+        }
+
+        .grid-form .field {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .grid-form .field label {
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .grid-form .field input,
+        .grid-form .field select {
+            flex: 1;
+            padding: 5px 8px;
+            border: 1px solid #999;
+            border-radius: 2px;
+            font-size: 13px;
+        }
+
+        .grid-form .field input[readonly] {
+            background: #f5f5f5;
+        }
+
+        .grid-form .field input.highlight-green {
+            background: #90EE90;
+            font-weight: bold;
+        }
+
+        .grid-form .field input.amount-input {
+            font-weight: bold;
+        }
+
+        .grid-form .field input.company-name-input {
+            font-weight: bold;
+            border: 2px solid #4CAF50;
+        }
+
+        .grid-2 {
+            grid-column: span 2;
+        }
+
+        .grid-4 {
+            grid-column: span 4;
+        }
+
+        .divider {
+            grid-column: span 4;
+            height: 1px;
+            background: #ccc;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>قبض الحوالات</h1>
+        <div class="date-section">
+            <label>التاريخ:</label>
+            <select id="dayName">
+                <option value="الأحد">الأحد</option>
+                <option value="الإثنين">الإثنين</option>
+                <option value="الثلاثاء">الثلاثاء</option>
+                <option value="الأربعاء">الأربعاء</option>
+                <option value="الخميس">الخميس</option>
+                <option value="الجمعة">الجمعة</option>
+                <option value="السبت">السبت</option>
+            </select>
+            <input type="date" id="transferDate" value="2026-10-18">
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active">تثبيت الجهة</div>
+        <div class="tab">تثبيت العملة</div>
+        <div class="tab">تثبيت المرسل</div>
+        <div class="tab">تثبيت المستلم</div>
+        <div class="tab">تثبيت الحساب</div>
+        <div class="tab">بطاقة المرسل</div>
+        <div class="tab">بطاقة المستلم</div>
+    </div>
+
+    <!-- Form Grid -->
+    <div class="grid-form">
+        <!-- Row 1: Transfer Type, Country, Region -->
+        <div class="field">
+            <label>نوع الحوالة</label>
+            <select id="transferType">
+                <option value="داخلي" selected>داخلي</option>
+                <option value="خارجي">خارجي</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>الدولة/المحافظة</label>
+            <select id="country">
+                <option value="">-- اختر --</option>
+                <option value="اليمن">اليمن</option>
+                <option value="السعودية">السعودية</option>
+            </select>
+        </div>
+        <div class="field grid-2">
+            <label>المنطقة</label>
+            <select id="region">
+                <option value="">-- اختر --</option>
+                <option value="صنعاء">صنعاء</option>
+                <option value="عدن">عدن</option>
+                <option value="تعز">تعز</option>
+                <option value="الحديدة">الحديدة</option>
+                <option value="إب">إب</option>
+                <option value="حضرموت">حضرموت</option>
+            </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 2: Company Names (Editable) -->
+        <div class="field grid-2">
+            <label>الجهة (من)</label>
+            <input type="text" id="companyFrom" class="company-name-input" value="شركة الحوشي" placeholder="اسم الشركة/الصراف">
+            <button class="btn-icon" onclick="searchCompany()">...</button>
+            <button class="btn-icon" onclick="searchCompany()">بحث</button>
+        </div>
+        <div class="field grid-2">
+            <label>الجهة (إلى)</label>
+            <input type="text" id="companyTo" class="company-name-input" value="شركة الحوشي" placeholder="اسم الشركة/الصراف">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 3: Amount -->
+        <div class="field">
+            <label>مبلغ الحوالة</label>
+            <input type="number" id="transferAmount" class="amount-input" placeholder="أدخل المبلغ" min="0">
+        </div>
+        <div class="field">
+            <label>فئات المبلغ</label>
+            <input type="text" id="amountCategories" readonly placeholder="تلقائي">
+        </div>
+        <div class="field">
+            <label>عملة الحوالة</label>
+            <select id="currency">
+                <option value="سعودي" selected>سعودي</option>
+                <option value="ريال يمني">ريال يمني</option>
+                <option value="دولار">دولار</option>
+            </select>
+        </div>
+        <div class="field">
+            <label></label>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 4: Receiver -->
+        <div class="field grid-2">
+            <label>المستلم</label>
+            <input type="text" id="receiverName" class="highlight-green" placeholder="أدخل اسم المستلم">
+        </div>
+        <div class="field grid-2">
+            <label>هاتف المستلم</label>
+            <input type="text" id="receiverPhone" placeholder="أدخل هاتف المستلم">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 5: Sender -->
+        <div class="field grid-2">
+            <label>المرسل</label>
+            <input type="text" id="senderName" class="highlight-green" placeholder="أدخل اسم المرسل">
+        </div>
+        <div class="field grid-2">
+            <label>هاتف المرسل</label>
+            <input type="text" id="senderPhone" placeholder="أدخل هاتف المرسل">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 6: Purpose and Access Number -->
+        <div class="field">
+            <label>غرض التحويل</label>
+            <select id="transferPurpose">
+                <option value="">-- اختر --</option>
+                <option value="تحويل عائلي">تحويل عائلي</option>
+                <option value="تجارة">تجارة</option>
+                <option value="علاج">علاج</option>
+                <option value="تعليم">تعليم</option>
+                <option value="أخرى">أخرى</option>
+            </select>
+        </div>
+        <div class="field grid-3" style="grid-column: span 3;">
+            <label>ملاحظات / رقم الاكسس</label>
+            <input type="text" id="accessNumber" readonly style="font-weight:bold; background:#f5f5f5;">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 7: Currency details -->
+        <div class="field">
+            <label>إلى العملة</label>
+            <input type="number" id="toCurrency" class="amount-input" value="1000" min="0">
+        </div>
+        <div class="field">
+            <label>عملة الفرع</label>
+            <input type="number" id="branchCurrency" readonly style="background:#f5f5f5;">
+        </div>
+        <div class="field">
+            <label>عملة المركز</label>
+            <input type="number" id="centerCurrency" readonly style="background:#f5f5f5;">
+        </div>
+        <div class="field">
+            <label>عملة الخدمة</label>
+            <select id="serviceCurrency">
+                <option value="ريال يمني" selected>ريال يمني</option>
+                <option value="سعودي">سعودي</option>
+                <option value="دولار">دولار</option>
+            </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 8: Total -->
+        <div class="field grid-2">
+            <label>الإجمالي مع العمولة</label>
+            <input type="number" id="totalWithFee" readonly style="background:#f5f5f5; font-weight:bold;">
+        </div>
+        <div class="field grid-2">
+            <label>ملاحظات</label>
+            <input type="text" id="notes" placeholder="ملاحظات إضافية">
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="bottom-section">
+        <button class="calc-btn" onclick="calculateFee()">
+            <span class="check-icon">✓</span>
+            احتساب العمولة
+        </button>
+        <div class="currency-row">
+            <label>عملة الخدمة:</label>
+            <select id="serviceCurrency2">
+                <option value="ريال يمني" selected>ريال يمني</option>
+                <option value="سعودي">سعودي</option>
+                <option value="دولار">دولار</option>
+            </select>
+            <label>عملة الفرع:</label>
+            <input type="number" id="branchCurrency2" readonly style="width:80px; background:#f5f5f5;">
+            <label>عملة المركز:</label>
+            <input type="number" id="centerCurrency2" readonly style="width:80px; background:#f5f5f5;">
+            <label>الإجمالي مع العمولة:</label>
+            <input type="number" id="totalWithFee2" readonly style="width:100px; background:#f5f5f5; font-weight:bold;">
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn btn-generate" onclick="generateInvoice()">📄 إنشاء السند</button>
+        <button class="btn btn-save" onclick="saveInvoice()"> حفظ</button>
+        <button class="btn btn-print" onclick="printInvoice()">🖨️ طباعة</button>
+        <button class="btn btn-clear" onclick="clearForm()">🗑️ مسح</button>
+    </div>
+
+    <!-- Invoice Preview (السند) -->
+    <div class="invoice-preview" id="invoicePreview">
+        <div class="inv-header">
+            <h2 id="invCompanyName">قبض الحوالات - شركة الحوشي</h2>
+            <div>
+                <strong>التاريخ:</strong> <span id="invDate"></span>
+            </div>
+        </div>
+        <div class="inv-body">
+            <div class="inv-row">
+                <span class="inv-label">نوع الحوالة:</span>
+                <span class="inv-value" id="invType"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">الجهة (من):</span>
+                <span class="inv-value" id="invCompanyFrom"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">الجهة (إلى):</span>
+                <span class="inv-value" id="invCompanyTo"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">المرسل:</span>
+                <span class="inv-value" id="invSender"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">هاتف المرسل:</span>
+                <span class="inv-value" id="invSenderPhone"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">المستلم:</span>
+                <span class="inv-value" id="invReceiver"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">هاتف المستلم:</span>
+                <span class="inv-value" id="invReceiverPhone"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">مبلغ الحوالة:</span>
+                <span class="inv-value" id="invAmount"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">عملة الحوالة:</span>
+                <span class="inv-value" id="invCurrency"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">غرض التحويل:</span>
+                <span class="inv-value" id="invPurpose"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">إلى العملة:</span>
+                <span class="inv-value" id="invToCurrency"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">عملة الخدمة:</span>
+                <span class="inv-value" id="invServiceCurrency"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">الإجمالي مع العمولة:</span>
+                <span class="inv-value" id="invTotal"></span>
+            </div>
+            <div class="inv-row">
+                <span class="inv-label">ملاحظات:</span>
+                <span class="inv-value" id="invNotes"></span>
+            </div>
+        </div>
+        <div class="inv-footer">
+            <p><strong>رقم الاكسس:</strong> <span class="access-number" id="invAccessNumber"></span></p>
+            <p style="margin-top:10px;">
+                <span class="amount-in-words" id="invAmountWords"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Generate random access number
+    function generateAccessNumber() {
+        const year = new Date().getFullYear();
+        const random = Math.floor(Math.random() * 9000000000) + 1000000000;
+        return year.toString() + random.toString().substring(0, 10);
+    }
+
+    // Update day name based on date
+    document.getElementById('transferDate').addEventListener('change', function() {
+        const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        const date = new Date(this.value);
+        document.getElementById('dayName').value = days[date.getDay()];
+    });
+
+    // Auto-generate access number on load
+    document.getElementById('accessNumber').value = generateAccessNumber();
+
+    // Calculate amount categories
+    document.getElementById('transferAmount').addEventListener('input', function() {
+        const amount = parseFloat(this.value) || 0;
+        document.getElementById('toCurrency').value = amount;
+        calculateCategories(amount);
+    });
+
+    document.getElementById('toCurrency').addEventListener('input', function() {
+        const amount = parseFloat(this.value) || 0;
+        document.getElementById('transferAmount').value = amount;
+        calculateCategories(amount);
+    });
+
+    function calculateCategories(amount) {
+        if (amount <= 0) {
+            document.getElementById('amountCategories').value = '';
+            return;
+        }
+
+        let categories = [];
+        let remaining = amount;
+
+        const denominations = [500, 200, 100, 50, 20, 10, 5, 1];
+
+        for (let denom of denominations) {
+            let count = Math.floor(remaining / denom);
+            if (count > 0) {
+                categories.push(`${count} × ${denom}`);
+                remaining -= count * denom;
+            }
+        }
+
+        document.getElementById('amountCategories').value = categories.join(' + ');
+    }
+
+    // Calculate fee
+    function calculateFee() {
+        const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+        const feeRate = 0.01; // 1% عمولة
+        const fee = amount * feeRate;
+        const total = amount + fee;
+
+        document.getElementById('branchCurrency').value = total.toFixed(2);
+        document.getElementById('centerCurrency').value = total.toFixed(2);
+        document.getElementById('totalWithFee').value = total.toFixed(2);
+        document.getElementById('branchCurrency2').value = total.toFixed(2);
+        document.getElementById('centerCurrency2').value = total.toFixed(2);
+        document.getElementById('totalWithFee2').value = total.toFixed(2);
+
+        alert('✅ تم احتساب العمولة بنجاح!\nالمبلغ: ' + amount + '\nالعمولة: ' + fee.toFixed(2) + '\nالإجمالي: ' + total.toFixed(2));
+    }
+
+    // Generate invoice (السند)
+    function generateInvoice() {
+        const senderName = document.getElementById('senderName').value.trim();
+        const receiverName = document.getElementById('receiverName').value.trim();
+        const amount = document.getElementById('transferAmount').value;
+        const companyFrom = document.getElementById('companyFrom').value.trim();
+        const companyTo = document.getElementById('companyTo').value.trim();
+
+        if (!senderName) {
+            alert('⚠️ الرجاء إدخال اسم المرسل');
+            document.getElementById('senderName').focus();
+            return;
+        }
+
+        if (!receiverName) {
+            alert('️ الرجاء إدخال اسم المستلم');
+            document.getElementById('receiverName').focus();
+            return;
+        }
+
+        if (!amount || amount <= 0) {
+            alert('⚠️ الرجاء إدخال مبلغ الحوالة');
+            document.getElementById('transferAmount').focus();
+            return;
+        }
+
+        // Fill invoice preview
+        const dateVal = document.getElementById('transferDate').value;
+        const dayName = document.getElementById('dayName').value;
+        document.getElementById('invDate').textContent = `${dayName} - ${dateVal}`;
+        document.getElementById('invCompanyName').textContent = `قبض الحوالات - ${companyFrom || 'شركة الحوشي'}`;
+        document.getElementById('invType').textContent = document.getElementById('transferType').value;
+        document.getElementById('invCompanyFrom').textContent = companyFrom || '---';
+        document.getElementById('invCompanyTo').textContent = companyTo || '---';
+        document.getElementById('invSender').textContent = senderName;
+        document.getElementById('invSenderPhone').textContent = document.getElementById('senderPhone').value || '---';
+        document.getElementById('invReceiver').textContent = receiverName;
+        document.getElementById('invReceiverPhone').textContent = document.getElementById('receiverPhone').value || '---';
+        document.getElementById('invAmount').textContent = amount + ' ' + document.getElementById('currency').value;
+        document.getElementById('invCurrency').textContent = document.getElementById('currency').value;
+        document.getElementById('invPurpose').textContent = document.getElementById('transferPurpose').value || '---';
+        document.getElementById('invToCurrency').textContent = document.getElementById('toCurrency').value + ' ' + document.getElementById('serviceCurrency').value;
+        document.getElementById('invServiceCurrency').textContent = document.getElementById('serviceCurrency').value;
+        document.getElementById('invTotal').textContent = (document.getElementById('totalWithFee').value || amount) + ' ' + document.getElementById('serviceCurrency').value;
+        document.getElementById('invNotes').textContent = document.getElementById('notes').value || '---';
+        document.getElementById('invAccessNumber').textContent = document.getElementById('accessNumber').value;
+
+        const amountWords = document.getElementById('toCurrency').value;
+        document.getElementById('invAmountWords').textContent = amountWords + ' ' + document.getElementById('serviceCurrency').value;
+
+        // Show preview
+        document.getElementById('invoicePreview').classList.add('show');
+
+        // Scroll to preview
+        document.getElementById('invoicePreview').scrollIntoView({ behavior: 'smooth' });
+
+        alert('✅ تم إنشاء السند بنجاح!');
+    }
+
+    // Save invoice
+    function saveInvoice() {
+        const senderName = document.getElementById('senderName').value.trim();
+        const receiverName = document.getElementById('receiverName').value.trim();
+        const amount = document.getElementById('transferAmount').value;
+
+        if (!senderName || !receiverName || !amount) {
+            alert('⚠️ الرجاء ملء جميع البيانات المطلوبة أولاً');
+            return;
+        }
+
+        const invoiceData = {
+            date: document.getElementById('transferDate').value,
+            dayName: document.getElementById('dayName').value,
+            transferType: document.getElementById('transferType').value,
+            companyFrom: document.getElementById('companyFrom').value,
+            companyTo: document.getElementById('companyTo').value,
+            senderName: senderName,
+            senderPhone: document.getElementById('senderPhone').value,
+            receiverName: receiverName,
+            receiverPhone: document.getElementById('receiverPhone').value,
+            amount: amount,
+            currency: document.getElementById('currency').value,
+            purpose: document.getElementById('transferPurpose').value,
+            accessNumber: document.getElementById('accessNumber').value,
+            totalWithFee: document.getElementById('totalWithFee').value,
+            notes: document.getElementById('notes').value
+        };
+
+        // Save to localStorage
+        let invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        invoices.push(invoiceData);
+        localStorage.setItem('invoices', JSON.stringify(invoices));
+
+        alert('✅ تم حفظ السند بنجاح!\nرقم الاكسس: ' + invoiceData.accessNumber);
+    }
+
+    // Print invoice
+    function printInvoice() {
+        const senderName = document.getElementById('senderName').value.trim();
+        const receiverName = document.getElementById('receiverName').value.trim();
+        const amount = document.getElementById('transferAmount').value;
+
+        if (!senderName || !receiverName || !amount) {
+            alert('⚠️ الرجاء ملء جميع البيانات المطلوبة أولاً');
+            return;
+        }
+
+        generateInvoice();
+        setTimeout(() => {
+            window.print();
+        }, 500);
+    }
+
+    // Clear form
+    function clearForm() {
+        if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+            document.getElementById('senderName').value = '';
+            document.getElementById('receiverName').value = '';
+            document.getElementById('transferAmount').value = '';
+            document.getElementById('toCurrency').value = '1000';
+            document.getElementById('senderPhone').value = '';
+            document.getElementById('receiverPhone').value = '';
+            document.getElementById('transferPurpose').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('amountCategories').value = '';
+            document.getElementById('totalWithFee').value = '';
+            document.getElementById('totalWithFee2').value = '';
+            document.getElementById('branchCurrency').value = '';
+            document.getElementById('branchCurrency2').value = '';
+            document.getElementById('centerCurrency').value = '';
+            document.getElementById('centerCurrency2').value = '';
+            document.getElementById('invoicePreview').classList.remove('show');
+
+            // Generate new access number
+            document.getElementById('accessNumber').value = generateAccessNumber();
+        }
+    }
+
+    // Search company
+    function searchCompany() {
+        const companyName = prompt(' أدخل اسم الشركة أو الصراف للبحث:');
+        if (companyName) {
+            document.getElementById('companyFrom').value = companyName;
+            document.getElementById('companyTo').value = companyName;
+        }
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
